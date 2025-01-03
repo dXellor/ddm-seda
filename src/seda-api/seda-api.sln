@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "seda-api", "seda-api\seda-api.csproj", "{D4FC9735-276F-4C03-820A-163137175457}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "seda-bll", "seda-bll\seda-bll.csproj", "{836F82B4-FBDA-44C5-BB1E-B676AD4CA5D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "seda-dll", "seda-dll\seda-dll.csproj", "{D31CB661-D8ED-4E7F-9776-099ED7FBA119}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{D4FC9735-276F-4C03-820A-163137175457}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4FC9735-276F-4C03-820A-163137175457}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4FC9735-276F-4C03-820A-163137175457}.Release|Any CPU.Build.0 = Release|Any CPU
+		{836F82B4-FBDA-44C5-BB1E-B676AD4CA5D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{836F82B4-FBDA-44C5-BB1E-B676AD4CA5D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{836F82B4-FBDA-44C5-BB1E-B676AD4CA5D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{836F82B4-FBDA-44C5-BB1E-B676AD4CA5D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D31CB661-D8ED-4E7F-9776-099ED7FBA119}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D31CB661-D8ED-4E7F-9776-099ED7FBA119}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D31CB661-D8ED-4E7F-9776-099ED7FBA119}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D31CB661-D8ED-4E7F-9776-099ED7FBA119}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
