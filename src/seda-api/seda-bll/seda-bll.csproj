@@ -11,4 +11,10 @@
       <ProjectReference Include="..\seda-dll\seda-dll.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="13.0.1" />
+      <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.3.0" />
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.0" />
+    </ItemGroup>
+
 </Project>
