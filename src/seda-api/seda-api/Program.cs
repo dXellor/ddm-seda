@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Minio;
 using seda_bll.Extensions;
 using seda_dll.Data;
 using seda_dll.Extensions;
@@ -62,6 +63,14 @@ builder.Services.AddSwaggerGen(opt =>
 });
 
 builder.Services.AddAutoMapper(typeof(Program));
+
+builder.Services.AddMinio(configureClient =>
+{
+    configureClient
+        .WithEndpoint(config["MinIO:Host"])
+        .WithCredentials(config["MinIO:AccessKey"], config["MinIO:SecretKey"])
+        .WithSSL(false);
+});
 
 builder.Services.AddDbContext<DataContext>();
 builder.Services.RegisterRepositories();

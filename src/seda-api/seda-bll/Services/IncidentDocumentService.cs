@@ -10,14 +10,16 @@ namespace seda_bll.Services;
 public class IncidentDocumentService: IIncidentDocumentService
 {
     private readonly IIncidentDocumentRepository _documentRepository;
+    private readonly IFileManagementService _fileManagementService;
     private readonly ILogger<IncidentDocumentService> _logger;
     private readonly IMapper _mapper;
     
-    public IncidentDocumentService(IIncidentDocumentRepository documentRepository, ILogger<IncidentDocumentService> logger, IMapper mapper)
+    public IncidentDocumentService(IIncidentDocumentRepository documentRepository, ILogger<IncidentDocumentService> logger, IMapper mapper, IFileManagementService fileManagementService)
     {
         _documentRepository = documentRepository;
         _logger = logger;
         _mapper = mapper;
+        _fileManagementService = fileManagementService;
     }
     
     public async Task<IEnumerable<IncidentDocumentInfoDto>> GetAllAsync()
@@ -58,5 +60,35 @@ public class IncidentDocumentService: IIncidentDocumentService
     public Task<int> DeleteAsync(int id)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<IncidentDocumentInfoDto> HandleDocumentUpload(
+        string fileName,
+        string contentType,
+        Stream documentStream)
+    {
+        // Parse contents of a PDF
+        
+        // Upload to the MinIO 
+        try
+        {
+            await _fileManagementService.UploadFile( fileName, contentType, documentStream );
+        }
+        catch (Exception e)
+        {
+            _logger.LogError($"Unable to upload file to the MinIO storage: {e.StackTrace}");
+            throw new ArgumentException("Document upload failed");
+        }
+        
+        
+        // Create record in the database
+        
+        // Return result
+
+        return new IncidentDocumentInfoDto()
+        {
+            Id = 1,
+            EmployeeFirstName = "LmaoPAo"
+        };
     }
 }

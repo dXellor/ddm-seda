@@ -11,5 +11,6 @@ public static class ServiceRegistrationExtensions
         services.AddScoped<IUserService, UserService>();        
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IIncidentDocumentService, IncidentDocumentService>();
+        services.AddScoped<IFileManagementService, FileManagementService>();
     }
 }

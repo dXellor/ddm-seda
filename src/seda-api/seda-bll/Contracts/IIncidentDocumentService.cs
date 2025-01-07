@@ -4,5 +4,5 @@ namespace seda_bll.Contracts;
 
 public interface IIncidentDocumentService: ICrudService<IncidentDocumentInfoDto>
 {
-    
+    Task<IncidentDocumentInfoDto> HandleDocumentUpload(string fileName, string contentType, Stream documentStream);
 }
