@@ -2,8 +2,11 @@ using AutoMapper;
 using Microsoft.Extensions.Logging;
 using seda_bll.Contracts;
 using seda_bll.Dtos.IncidentDocuments;
+using seda_bll.Helpers;
 using seda_dll.Contracts;
 using seda_dll.Models;
+using seda_dll.Models.Enums;
+using UglyToad.PdfPig;
 
 namespace seda_bll.Services;
 
@@ -68,11 +71,13 @@ public class IncidentDocumentService: IIncidentDocumentService
         Stream documentStream)
     {
         // Parse contents of a PDF
+        var parsedDocument = ParseIncidentDocumentInfoFromPdf(fileName, documentStream);
         
         // Upload to the MinIO 
         try
         {
-            await _fileManagementService.UploadFile( fileName, contentType, documentStream );
+            documentStream.Position = 0;
+            await _fileManagementService.UploadFile(fileName, contentType, documentStream);
         }
         catch (Exception e)
         {
@@ -80,15 +85,48 @@ public class IncidentDocumentService: IIncidentDocumentService
             throw new ArgumentException("Document upload failed");
         }
         
-        
         // Create record in the database
         
         // Return result
 
-        return new IncidentDocumentInfoDto()
+        return _mapper.Map<IncidentDocument, IncidentDocumentInfoDto>(parsedDocument);
+    }
+
+    private IncidentDocument ParseIncidentDocumentInfoFromPdf(string fileName, Stream documentStream)
+    {
+        var titlePageContent = ReadContentFromPdfTitlePage(documentStream);
+        var parsedDocumentInfo = IncidentDocumentParser.ParseContent(titlePageContent);
+        parsedDocumentInfo.FileSystemId = fileName;
+        return parsedDocumentInfo;
+    }
+
+    private string ReadContentFromPdfTitlePage(Stream pdfStream)
+    {
+        // var pdfReader = new PdfReader(pdfStream);
+        // var pdf = new PdfDocument(pdfReader);
+        //
+        // ITextExtractionStrategy strategy = new SimpleTextExtractionStrategy();
+        // var pageContent = PdfTextExtractor.GetTextFromPage(pdf.GetPage(1), strategy);
+        //
+        // pdf.Close();
+        // pdfReader.Close();
+        //
+        // return pageContent;
+        
+        using (var document = PdfDocument.Open(pdfStream))
         {
-            Id = 1,
-            EmployeeFirstName = "LmaoPAo"
-        };
+            // String to accumulate extracted text
+            var text = new System.Text.StringBuilder();
+
+            // Loop through each page and extract text
+            var page = document.GetPage(1);
+            var pageText = page.Text;
+
+            // Append the text of the page
+            text.AppendLine(pageText);
+
+            // Output the text with preserved spaces
+            return text.ToString();
+        }
     }
 }

@@ -1,52 +1,52 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  elasticsearch:
-    image: elasticsearch:8.17.0
-    container_name: elasticsearch
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    volumes:
-      - es_storage:/usr/share/elasticsearch/data/
-      - ./config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
-    environment:
-      - discovery.type=single-node
-      - http.host=0.0.0.0
-      - transport.host=0.0.0.0
-      - xpack.security.enabled=false
-      - cluster.name=elasticsearch
-      - bootstrap.memory_lock=true
-    networks:
-      - seda
+  # elasticsearch:
+  #   image: elasticsearch:8.17.0
+  #   container_name: elasticsearch
+  #   ports:
+  #     - "9200:9200"
+  #     - "9300:9300"
+  #   volumes:
+  #     - es_storage:/usr/share/elasticsearch/data/
+  #     - ./config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+  #   environment:
+  #     - discovery.type=single-node
+  #     - http.host=0.0.0.0
+  #     - transport.host=0.0.0.0
+  #     - xpack.security.enabled=false
+  #     - cluster.name=elasticsearch
+  #     - bootstrap.memory_lock=true
+  #   networks:
+  #     - seda
 
-  logstash:
-    image: logstash:8.17.0
-    container_name: logstash
-    ports:
-      - "5044:5044"
-      - "9600:9600"
-    volumes:
-      - ./config/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-      - ./config/logstash.yml:/usr/share/logstash/config/logstash.yml
-      - ls_storage:/usr/share/logstash/data
-    networks:
-      - seda
-    depends_on:
-      - elasticsearch
+  # logstash:
+  #   image: logstash:8.17.0
+  #   container_name: logstash
+  #   ports:
+  #     - "5044:5044"
+  #     - "9600:9600"
+  #   volumes:
+  #     - ./config/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+  #     - ./config/logstash.yml:/usr/share/logstash/config/logstash.yml
+  #     - ls_storage:/usr/share/logstash/data
+  #   networks:
+  #     - seda
+  #   depends_on:
+  #     - elasticsearch
 
-  kibana:
-    image: kibana:8.17.0
-    container_name: kibana
-    ports:
-      - "5601:5601"
-    volumes:
-      - ./config/kibana.yml:/usr/share/kibana/config/kibana.yml
-      - kb_storage:/usr/share/kibana/data
-    networks:
-      - seda
-    depends_on:
-      - elasticsearch
+  # kibana:
+  #   image: kibana:8.17.0
+  #   container_name: kibana
+  #   ports:
+  #     - "5601:5601"
+  #   volumes:
+  #     - ./config/kibana.yml:/usr/share/kibana/config/kibana.yml
+  #     - kb_storage:/usr/share/kibana/data
+  #   networks:
+  #     - seda
+  #   depends_on:
+  #     - elasticsearch
 
   minio:
     image: minio/minio
@@ -59,6 +59,16 @@ services:
       - MINIO_ROOT_USER
       - MINIO_ROOT_PASSWORD
     command: server --console-address ":9001" /data
+    networks:
+      - seda
+
+  pdf-parser:
+    build:
+      context: ./seda-pdf-parser
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    container_name: pdf-parser
     networks:
       - seda
 
