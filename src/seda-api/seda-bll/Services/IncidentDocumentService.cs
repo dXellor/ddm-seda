@@ -70,10 +70,8 @@ public class IncidentDocumentService: IIncidentDocumentService
         string contentType,
         Stream documentStream)
     {
-        // Parse contents of a PDF
-        var parsedDocument = ParseIncidentDocumentInfoFromPdf(fileName, documentStream);
+        var parsedDocument = await ParseIncidentDocumentInfoFromPdf(fileName, documentStream);
         
-        // Upload to the MinIO 
         try
         {
             documentStream.Position = 0;
@@ -85,48 +83,27 @@ public class IncidentDocumentService: IIncidentDocumentService
             throw new ArgumentException("Document upload failed");
         }
         
-        // Create record in the database
-        
-        // Return result
-
-        return _mapper.Map<IncidentDocument, IncidentDocumentInfoDto>(parsedDocument);
+        var newIncidentDocument = await _documentRepository.CreateAsync( parsedDocument );
+        return _mapper.Map<IncidentDocument, IncidentDocumentInfoDto>(newIncidentDocument);
     }
 
-    private IncidentDocument ParseIncidentDocumentInfoFromPdf(string fileName, Stream documentStream)
+    private async Task<IncidentDocument> ParseIncidentDocumentInfoFromPdf(string fileName, Stream documentStream)
     {
-        var titlePageContent = ReadContentFromPdfTitlePage(documentStream);
+        var titlePageContent = await ReadContentFromPdfTitlePage(documentStream);
         var parsedDocumentInfo = IncidentDocumentParser.ParseContent(titlePageContent);
         parsedDocumentInfo.FileSystemId = fileName;
         return parsedDocumentInfo;
     }
 
-    private string ReadContentFromPdfTitlePage(Stream pdfStream)
+    private async Task<string> ReadContentFromPdfTitlePage(Stream pdfStream)
     {
-        // var pdfReader = new PdfReader(pdfStream);
-        // var pdf = new PdfDocument(pdfReader);
-        //
-        // ITextExtractionStrategy strategy = new SimpleTextExtractionStrategy();
-        // var pageContent = PdfTextExtractor.GetTextFromPage(pdf.GetPage(1), strategy);
-        //
-        // pdf.Close();
-        // pdfReader.Close();
-        //
-        // return pageContent;
-        
-        using (var document = PdfDocument.Open(pdfStream))
+        var pdfPath = Path.GetTempFileName();
+        await using (var tempPdfFile = File.Open(pdfPath, FileMode.Open, FileAccess.ReadWrite))
         {
-            // String to accumulate extracted text
-            var text = new System.Text.StringBuilder();
-
-            // Loop through each page and extract text
-            var page = document.GetPage(1);
-            var pageText = page.Text;
-
-            // Append the text of the page
-            text.AppendLine(pageText);
-
-            // Output the text with preserved spaces
-            return text.ToString();
+            pdfStream.Seek(0, SeekOrigin.Begin);
+            await pdfStream.CopyToAsync(tempPdfFile);
         }
+        
+        return ExternalScriptRunner.RunPdfToTextScript(pdfPath);
     }
 }

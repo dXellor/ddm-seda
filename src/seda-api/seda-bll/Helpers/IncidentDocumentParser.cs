@@ -7,21 +7,20 @@ namespace seda_bll.Helpers;
 
 public static class IncidentDocumentParser
 {
-    private static readonly string _employeeNamePattern = @"Securityincidentresponseteammember: [A-Z][A-Za-z]+ [A-Z][A-Za-z]+";
-    private static readonly string _securityOrganizationNamePattern = @"Cybersecurity Company: [A-Z0-9][A-Za-z0-9]+ ([A-Za-z0-9]+)+";
-    private static readonly string _targetedOrganizationNamePattern = @"Targeted Organization: [A-Z0-9][A-Za-z0-9]+ ([A-Za-z0-9]+)+";
-    private static readonly string _targetedOrganizationAddressPattern = @"Targeted\sOrganization\sAddress:\d+\s[A-Za-z\s]+,\s[A-Za-z\s]+,\s[A-Za-z\s]+,\s[A-Za-z\s]+(?:\s[A-Za-z0-9]{1,2}\d\s[A-Za-z]{2})?(\n)?,\s[A-Za-z]+";
-    private static readonly string _incidentLevelPattern = @"Incidentseveritylevel: [A-Z][a-z]+";
+    private static readonly string _employeeNamePattern = @"Security incident response team member: [A-Z][A-Za-z]+ [A-Z][A-Za-z]+";
+    private static readonly string _securityOrganizationNamePattern = @"Cybersecurity Company: [A-Z0-9][A-Za-z0-9]+ ?([A-Za-z0-9]+)*";
+    private static readonly string _targetedOrganizationNamePattern = @"Targeted Organization: [A-Z0-9][A-Za-z0-9]+ ?([A-Za-z0-9]+)*";
+    private static readonly string _targetedOrganizationAddressPattern = @"Targeted\sOrganization\sAddress: \d{1,5}\s[\w\s]+,\s[\w\s]+,\s[\w\s]+,\s[\w\s]+(?:\s[A-Z]{1,2}\d{1,2}\s\d[A-Z]{1,2}\d{1,2})?,\s([\w ]+)";
+    private static readonly string _incidentLevelPattern = @"Incident severity level: [A-Z][a-z]+";
     
     public static IncidentDocument ParseContent(string content)
     {
-        content = AddSpacesToSentence(content);
         var documentInfo = new IncidentDocument();
         
         // Employee name
         var matches = Regex.Match(content, _employeeNamePattern);
         var matchedValue = matches.Value ?? " ";
-        matchedValue = matchedValue.Replace("Securityincidentresponseteammember: ", "");
+        matchedValue = matchedValue.Replace("Security incident response team member: ", "");
         if (matchedValue.Split(" ").Length > 1)
         {
             documentInfo.EmployeeFirstName = matchedValue.Split(" ")[0];
@@ -44,12 +43,12 @@ public static class IncidentDocumentParser
         matches = Regex.Match(content, _targetedOrganizationAddressPattern);
         matchedValue = matches.Value ?? "";
         matchedValue = matchedValue.Replace("Targeted Organization Address:", "");
-        documentInfo.TargetedOrganizationAddress = matchedValue;
+        documentInfo.TargetedOrganizationAddress = matchedValue.Replace("\n", " ");
         
         // Incident severity level
         matches = Regex.Match(content, _incidentLevelPattern);
         matchedValue = matches.Value ?? "";
-        matchedValue = matchedValue.Replace("Incidentseveritylevel: ", "");
+        matchedValue = matchedValue.Replace("Incident severity level: ", "");
         documentInfo.IncidentLevel = ConvertToIncidentLevelEnum(matchedValue);
         
         return documentInfo;
@@ -65,20 +64,4 @@ public static class IncidentDocumentParser
             _ => IncidentLevel.Critical
         };
     }
-    
-    private static string AddSpacesToSentence(string text)
-    {
-        if (string.IsNullOrWhiteSpace(text))
-            return "";
-        StringBuilder newText = new StringBuilder(text.Length * 2);
-        newText.Append(text[0]);
-        for (int i = 1; i < text.Length; i++)
-        {
-            if (char.IsUpper(text[i]) && text[i - 1] != ' ')
-                newText.Append(' ');
-            newText.Append(text[i]);
-        }
-        return newText.ToString();
-    }
-
 }
