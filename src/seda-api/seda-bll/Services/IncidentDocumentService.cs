@@ -3,6 +3,8 @@ using Microsoft.Extensions.Logging;
 using seda_bll.Contracts;
 using seda_bll.Dtos.IncidentDocuments;
 using seda_bll.Helpers;
+using seda_dll_es.Contracts;
+using seda_dll_es.Models;
 using seda_dll.Contracts;
 using seda_dll.Models;
 using seda_dll.Models.Enums;
@@ -14,15 +16,17 @@ public class IncidentDocumentService: IIncidentDocumentService
 {
     private readonly IIncidentDocumentRepository _documentRepository;
     private readonly IFileManagementService _fileManagementService;
+    private readonly IElasticRepository<ESIncidentDocument> _elasticRepository;
     private readonly ILogger<IncidentDocumentService> _logger;
     private readonly IMapper _mapper;
     
-    public IncidentDocumentService(IIncidentDocumentRepository documentRepository, ILogger<IncidentDocumentService> logger, IMapper mapper, IFileManagementService fileManagementService)
+    public IncidentDocumentService(IIncidentDocumentRepository documentRepository, ILogger<IncidentDocumentService> logger, IMapper mapper, IFileManagementService fileManagementService, IElasticRepository<IncidentDocument> elasticRepository)
     {
         _documentRepository = documentRepository;
         _logger = logger;
         _mapper = mapper;
         _fileManagementService = fileManagementService;
+        _elasticRepository = elasticRepository;
     }
     
     public async Task<IEnumerable<IncidentDocumentInfoDto>> GetAllAsync()
@@ -85,6 +89,28 @@ public class IncidentDocumentService: IIncidentDocumentService
         
         var newIncidentDocument = await _documentRepository.CreateAsync( parsedDocument );
         return _mapper.Map<IncidentDocument, IncidentDocumentInfoDto>(newIncidentDocument);
+    }
+
+    public async Task<IncidentDocumentInfoDto> UpdateAndIndexDocumentAsync(IncidentDocumentInfoDto documentInfoDto)
+    {
+        var document = await _documentRepository.GetByIdAsync(documentInfoDto.Id);
+        if (document == null)
+            throw new ArgumentException("Document not found");
+        
+        //calculate coordinates
+        
+        
+        //update
+        var newDocumentInfo = _mapper.Map<IncidentDocumentInfoDto, IncidentDocument>(documentInfoDto);
+        _mapper.Map(newDocumentInfo, document);
+        var updatedDocument = await _documentRepository.UpdateAsync(document);
+        
+        //index
+        var indexingResult = await _elasticRepository.IndexDocumentAsync( _mapper.Map<IncidentDocument, ESIncidentDocument>(document) );
+        if (!indexingResult)
+            throw new ArgumentException("Unable to index the document in the ES service");
+
+        return _mapper.Map<IncidentDocument, IncidentDocumentInfoDto>(updatedDocument);
     }
 
     private async Task<IncidentDocument> ParseIncidentDocumentInfoFromPdf(string fileName, Stream documentStream)

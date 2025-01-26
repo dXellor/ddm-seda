@@ -11,7 +11,7 @@ public class DataContext: DbContext
     
     public DbSet<User> Users { get; init; }
     public DbSet<IncidentDocument> Documents { get; init; }
-
+    
     public DataContext(DbContextOptions options, IConfiguration configuration) : base(options)
     {
         _configuration = configuration;

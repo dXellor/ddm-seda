@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Minio;
 using seda_bll.Extensions;
+using seda_dll_es.Extensions;
 using seda_dll.Data;
 using seda_dll.Extensions;
 
@@ -74,6 +75,7 @@ builder.Services.AddMinio(configureClient =>
 
 builder.Services.AddDbContext<DataContext>();
 builder.Services.RegisterRepositories();
+builder.Services.RegisterESRepositories();
 builder.Services.RegisterServices();
 builder.Services.RegisterMapperProfiles();
 

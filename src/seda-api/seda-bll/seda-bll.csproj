@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\seda-dll-es\seda-dll-es.csproj" />
       <ProjectReference Include="..\seda-dll\seda-dll.csproj" />
     </ItemGroup>
 

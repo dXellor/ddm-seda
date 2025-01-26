@@ -18,6 +18,15 @@ public class IncidentDocumentController : ControllerBase
         _logger = logger;
     }
     
+    [HttpPost("IndexDocument")]
+    [ProducesResponseType(typeof(IncidentDocumentInfoDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> IndexDocument( [FromBody] IncidentDocumentInfoDto documentInfoDto )
+    {
+        var result = await _documentService.UpdateAndIndexDocumentAsync(documentInfoDto);
+        return Ok(documentInfo);
+    }
+    
     //Auth endpoints
     [HttpPost("UploadDocument")]
     [ProducesResponseType(typeof(IncidentDocumentInfoDto), StatusCodes.Status201Created)]
