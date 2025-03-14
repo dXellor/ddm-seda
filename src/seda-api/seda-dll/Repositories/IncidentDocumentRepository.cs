@@ -37,9 +37,24 @@ public class IncidentDocumentRepository: IIncidentDocumentRepository
         return newObject;
     }
 
-    public Task<IncidentDocument> UpdateAsync(IncidentDocument updatedObject)
+    public async Task<IncidentDocument> UpdateAsync(IncidentDocument updatedObject)
     {
-        throw new NotImplementedException();
+        var selectedDocument = _documents.FirstOrDefault( x => x.Id == updatedObject.Id );
+        if( selectedDocument is null )
+            throw new KeyNotFoundException("Document not found");
+        
+        selectedDocument.EmployeeFirstName = updatedObject.EmployeeFirstName;
+        selectedDocument.EmployeeLastName = updatedObject.EmployeeLastName;
+        selectedDocument.IncidentLevel = updatedObject.IncidentLevel;
+        selectedDocument.SecurityOrganizationName = updatedObject.SecurityOrganizationName;
+        selectedDocument.TargetedOrganizationAddress = updatedObject.TargetedOrganizationAddress;
+        selectedDocument.TargetedOrganizationName = updatedObject.TargetedOrganizationName;
+        selectedDocument.TargetedOrganizationLatitude = updatedObject.TargetedOrganizationLatitude;
+        selectedDocument.TargetedOrganizationLongitude = updatedObject.TargetedOrganizationLongitude;
+        
+        await _dataContext.SaveChangesAsync().ConfigureAwait( false );
+
+        return selectedDocument;
     }
 
     public Task<int> DeleteAsync(int id)

@@ -20,7 +20,12 @@ public class IncidentDocumentService: IIncidentDocumentService
     private readonly ILogger<IncidentDocumentService> _logger;
     private readonly IMapper _mapper;
     
-    public IncidentDocumentService(IIncidentDocumentRepository documentRepository, ILogger<IncidentDocumentService> logger, IMapper mapper, IFileManagementService fileManagementService, IElasticRepository<IncidentDocument> elasticRepository)
+    public IncidentDocumentService(
+        IIncidentDocumentRepository documentRepository,
+        ILogger<IncidentDocumentService> logger,
+        IMapper mapper,
+        IFileManagementService fileManagementService,
+        IElasticRepository<ESIncidentDocument> elasticRepository )
     {
         _documentRepository = documentRepository;
         _logger = logger;

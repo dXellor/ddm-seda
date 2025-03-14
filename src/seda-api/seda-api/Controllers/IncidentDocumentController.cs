@@ -24,7 +24,7 @@ public class IncidentDocumentController : ControllerBase
     public async Task<IActionResult> IndexDocument( [FromBody] IncidentDocumentInfoDto documentInfoDto )
     {
         var result = await _documentService.UpdateAndIndexDocumentAsync(documentInfoDto);
-        return Ok(documentInfo);
+        return Ok(result);
     }
     
     //Auth endpoints
