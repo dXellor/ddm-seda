@@ -6,4 +6,5 @@ public interface IIncidentDocumentService: ICrudService<IncidentDocumentInfoDto>
 {
     Task<IncidentDocumentInfoDto> HandleDocumentUpload(string fileName, string contentType, Stream documentStream);
     Task<IncidentDocumentInfoDto> UpdateAndIndexDocumentAsync(IncidentDocumentInfoDto documentInfoDto);
+    Task<IEnumerable<IncidentDocumentInfoDto>> QueryIndexedDocumentsAsync(DocumentQueryParameters parameters, CancellationToken cancellationToken);
 }

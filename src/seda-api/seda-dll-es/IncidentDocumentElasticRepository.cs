@@ -24,9 +24,15 @@ public class IncidentDocumentElasticRepository: IElasticRepository<ESIncidentDoc
         return result.IsValidResponse;
     }
 
-    public async Task<IEnumerable<ESIncidentDocument>> QueryDocuments()
+    public async Task<IEnumerable<ESIncidentDocument>> QueryDocuments( 
+        ESIncidentDocument parameters,
+        CancellationToken cancellationToken )
     {
-        throw new NotImplementedException();
+        // Can't be f**ked
+        var esQuery = $"FROM {_indexName} | WHERE employeeFirstName LIKE \"*{parameters.EmployeeFirstName}*\" OR employeeLastName LIKE \"*{parameters.EmployeeLastName}*\" OR incidentLevel==\"{parameters.IncidentLevel.ToString()}\" OR targetedOrganizationName LIKE \"*{parameters.TargetedOrganizationName}*\" OR securityOrganizationName LIKE \"*{parameters.SecurityOrganizationName}*\" ";
+        
+        return await _client.Esql.QueryAsObjectsAsync<ESIncidentDocument>(r =>
+                r.Query( esQuery ), cancellationToken);
     }
     
     private async Task CreateIndexIfDoesntExist()

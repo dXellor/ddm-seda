@@ -24,7 +24,7 @@ public class UserController : ControllerBase
     [Authorize]
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<UserDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetUsers()
+    public async Task<IActionResult> GetUsersAsync()
     {
         var users = await _userService.GetAllAsync();
         return Ok(users);
@@ -35,7 +35,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> UpdateUser([FromBody] UserDto updatedUser)
+    public async Task<IActionResult> UpdateUserAsync([FromBody] UserDto updatedUser)
     {
         try
         {
@@ -58,7 +58,7 @@ public class UserController : ControllerBase
     [HttpPost("register")]
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Register([FromBody] RegistrationDto registrationDto)
+    public async Task<IActionResult> RegisterAsync([FromBody] RegistrationDto registrationDto)
     {
         var validator = new RegistrationDtoValidator();
         var validationResult = await validator.ValidateAsync(registrationDto);

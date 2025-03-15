@@ -118,6 +118,15 @@ public class IncidentDocumentService: IIncidentDocumentService
         return _mapper.Map<IncidentDocument, IncidentDocumentInfoDto>(updatedDocument);
     }
 
+    public async Task<IEnumerable<IncidentDocumentInfoDto>> QueryIndexedDocumentsAsync(
+        DocumentQueryParameters parameters,
+        CancellationToken cancellationToken)
+    {
+        var results = await _elasticRepository.QueryDocuments(_mapper.Map<DocumentQueryParameters, ESIncidentDocument>(parameters), cancellationToken );
+        return results.Select(d => _mapper.Map<ESIncidentDocument, IncidentDocumentInfoDto>(d)).ToList();
+    }
+
+    #region Private Methods
     private async Task<IncidentDocument> ParseIncidentDocumentInfoFromPdf(string fileName, Stream documentStream)
     {
         var titlePageContent = await ReadContentFromPdfTitlePage(documentStream);
@@ -137,4 +146,6 @@ public class IncidentDocumentService: IIncidentDocumentService
         
         return ExternalScriptRunner.RunPdfToTextScript(pdfPath);
     }
+    #endregion
+
 }

@@ -11,5 +11,7 @@ public class IncidentDocumentProfile: Profile
     {
         CreateMap<IncidentDocument, IncidentDocumentInfoDto>().ReverseMap();
         CreateMap<IncidentDocument, ESIncidentDocument>().ReverseMap();
+        CreateMap<DocumentQueryParameters, ESIncidentDocument>().ReverseMap();
+        CreateMap<ESIncidentDocument, IncidentDocumentInfoDto>().ReverseMap();
     }
 }

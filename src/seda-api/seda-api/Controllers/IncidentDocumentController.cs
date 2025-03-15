@@ -21,17 +21,16 @@ public class IncidentDocumentController : ControllerBase
     [HttpPost("IndexDocument")]
     [ProducesResponseType(typeof(IncidentDocumentInfoDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> IndexDocument( [FromBody] IncidentDocumentInfoDto documentInfoDto )
+    public async Task<IActionResult> IndexDocumentAsync( [FromBody] IncidentDocumentInfoDto documentInfoDto )
     {
         var result = await _documentService.UpdateAndIndexDocumentAsync(documentInfoDto);
         return Ok(result);
     }
     
-    //Auth endpoints
     [HttpPost("UploadDocument")]
     [ProducesResponseType(typeof(IncidentDocumentInfoDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> UploadDocument()
+    public async Task<IActionResult> UploadDocumentAsync()
     {
         if (!Request.Form.Files.Any())
             return BadRequest("No content uploaded");
@@ -39,6 +38,17 @@ public class IncidentDocumentController : ControllerBase
         var fileToUpload = Request.Form.Files[0];
         var documentInfo = await _documentService.HandleDocumentUpload(fileToUpload.FileName, fileToUpload.ContentType, fileToUpload.OpenReadStream());
         return Ok(documentInfo);
+    }
+    
+    [HttpPost("QueryIndex")]
+    [ProducesResponseType(typeof(IncidentDocumentInfoDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> QueryIndexAsync(
+        [FromQuery] DocumentQueryParameters queryParameters,
+        CancellationToken cancellationToken )
+    {
+        var results = await _documentService.QueryIndexedDocumentsAsync(queryParameters, cancellationToken);
+        return Ok(results);
     }
 }
 
