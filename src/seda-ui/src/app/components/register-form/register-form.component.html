@@ -1,0 +1,18 @@
+<form class="form-box" [formGroup]="registerForm">
+  <label for="email">Email</label>
+  <input name="email" type="email" required formControlName="email">
+
+  <label for="password">Password</label>
+  <input name="password" type="password" required formControlName="password">
+
+  <label for="repeartPassword">Repeat Password</label>
+  <input name="repeatPassword" type="password" required formControlName="repeatPassword">
+
+  <label for="firstName">First Name</label>
+  <input name="firstName" type="text" required formControlName="firstName">
+
+  <label for="lastName">Last Name</label>
+  <input name="lastName" type="text" required formControlName="lastName">
+
+  <button (click)="register()">Sign in</button>
+</form>

@@ -97,8 +97,7 @@ public class UserService: IUserService
 
         return new LoginResponseDto()
         {
-            UserFirstName = userDto.FirstName,
-            UserLastName = userDto.LastName,
+            User = userDto,
             AccessToken = _tokenService.GenerateAccessToken(userDto)
         };
     }

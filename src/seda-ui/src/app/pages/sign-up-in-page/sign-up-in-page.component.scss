@@ -1,0 +1,27 @@
+.page-box{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  .motd{
+    color: purple
+  }
+
+  .form{
+    min-width: 350px;
+
+    .form-switch{
+      display: flex;
+      justify-content: space-around;
+      gap: 10px;
+      border: 2px solid purple;
+      text-decoration: underline;
+    }
+
+    .form-content{
+      margin-top: 10px;
+      padding: 5%;
+      border: 2px solid purple;
+    }
+  }
+}

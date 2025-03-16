@@ -1,0 +1,20 @@
+<div class="page-box">
+  <div class="motd">
+    <h1>Welcome to DDM-SEDA. Please {{ switch() === 'signin' ? 'sign in' : 'sign up'}}.</h1>
+  </div>
+
+  <div class="form">
+    <div class="form-switch">
+      <p (click)="changeFormSwitch('signup')">Sign up</p>
+      <p (click)="changeFormSwitch('signin')">Sign in</p>
+    </div>
+    <div class="form-content">
+      @if (switch() === 'signin'){
+        <app-login-form></app-login-form>
+      }
+      @else{
+        <app-register-form></app-register-form>
+      }
+    </div>
+  </div>
+</div>

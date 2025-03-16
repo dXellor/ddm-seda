@@ -1,0 +1,9 @@
+<form class="form-box" [formGroup]="loginForm">
+  <label for="email">Email</label>
+  <input name="email" type="email" required formControlName="email">
+
+  <label for="password">Password</label>
+  <input name="password" type="password" required formControlName="password">
+
+  <button (click)="login()">Sign in</button>
+</form>
